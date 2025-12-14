@@ -16,6 +16,11 @@ my_posts = [{
 
     {"title": "favorite foods" ,"content":"I like pizza", "id":2 }]
 
+def find_post(id):
+    for post in my_posts:
+        if post["id"] == id:
+            return post
+
 
 
 @app.get("/")
@@ -34,5 +39,13 @@ def create_posts(post: Post):
     post_dict["id"] = randrange(0,10000)
     my_posts.append(post_dict)
     return {"data": post_dict}
-#title str, content str
 
+@app.get("/posts/latest")
+def get_latest_post():
+    return {"detail": my_posts[-1]}
+
+
+@app.get("/posts/{id}")
+def get_post(id:int):
+    post = find_post(id)
+    return {"post_detail": post}
