@@ -5,13 +5,16 @@ from django.forms.widgets import Select
 from fastapi import FastAPI, Response,status,HTTPException,Depends
 from fastapi.params import Body
 from pydantic import BaseModel
+
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import models, schemas,utils
 from .database import engine,get_db
+
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -143,6 +146,10 @@ def update_post(id: int, updated_post: schemas.PostCreate , db: Session = Depend
 
 @app.post("/users", status_code=status.HTTP_201_CREATED,response_model=schemas.userout)
 def create_user( user: schemas.usercreate, db:Session = Depends(get_db)):
+    #hash the password - user.password
+    hashed_password = utils.hash(user.password)
+    user.password = hashed_password
+
     new_user= models.User(**user.dict())
     db.add(new_user)
     db.commit()
