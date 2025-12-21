@@ -1,7 +1,7 @@
 from http.client import responses
 from typing import Optional,List
 
-from django.forms.widgets import Select
+
 from fastapi import FastAPI, Response,status,HTTPException,Depends
 from fastapi.params import Body
 from pydantic import BaseModel
@@ -11,8 +11,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-from . import models, schemas,utils
-from .database import engine,get_db
+from app import models,schemas,utils
+from app.database import engine,get_db
 
 
 
