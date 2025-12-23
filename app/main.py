@@ -13,6 +13,7 @@ import time
 from sqlalchemy.orm import Session
 from app import models,schemas,utils
 from app.database import engine,get_db
+from .router import  post ,user,auth
 
 
 
@@ -53,6 +54,10 @@ def find_index(id: int):
         if post["id"] == id:
             return i
 
+app.include_router(post.router)
+app.include_router(user.router)
+app.include_router(auth.router)
+
 
 @app.get("/")
 def root():
@@ -69,8 +74,11 @@ def get_posts(db: Session = Depends(get_db)):
 
 #post method url : "/data"
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
+@app.post("/users", status_code=status.HTTP_201_CREATED,
+          response_model=schemas.UserOut)
+
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+
    # cursor.execute("""INSERT INTO posts (title,content,published)
     #VALUES (%s,%s,%s) RETURNING * """, (post.title,post.content,post.published))
    # new_post = cursor.fetchone()
@@ -144,8 +152,11 @@ def update_post(id: int, updated_post: schemas.PostCreate , db: Session = Depend
 
     return  post_query.first()
 
-@app.post("/users", status_code=status.HTTP_201_CREATED,response_model=schemas.userout)
-def create_user( user: schemas.usercreate, db:Session = Depends(get_db)):
+@app.post("/users", status_code=status.HTTP_201_CREATED,
+          response_model=schemas.UserOut)
+
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+
     #hash the password - user.password
     hashed_password = utils.hash(user.password)
     user.password = hashed_password
